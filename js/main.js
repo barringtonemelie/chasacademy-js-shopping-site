@@ -1,9 +1,26 @@
 const shop = document.getElementById('shop');
 let basket = JSON.parse(localStorage.getItem("data")) || [];
 // Produktdatat finns i variabeln shopData (se data.js)
-let cartAmount = document.getElementById("cartAmount"); 
+let cartAmountDiv = document.getElementById("cartAmount"); 
 
-const generateShop = () => {
+generateShop();
+
+if (basket.length != 0) {
+    getCartAndProductAmounts(); 
+}
+
+function getCartAndProductAmounts() {
+    let amount = 0;
+    basket.forEach(product => {
+        amount += product.productQuantity;
+        const productQuantityDiv = document.getElementById(`quantity-${product.productId}`); 
+        productQuantityDiv.innerText = product.productQuantity; 
+    });
+    cartAmountDiv.innerText = amount;
+}
+
+
+function generateShop() {
     // Generera alla produkter med dynamisk HTML och Array.protype.map() samt join()
     const shopItems = shopData.map(createShopItems); 
     let shopItemsJoined = shopItems.join(""); 
@@ -31,31 +48,54 @@ function createShopItems (item) {
     </div>`; 
 }
 
-generateShop()
-
 const increment = (id) => {
     // Om användaren klickar på + på produkten 
+    // Uppdaterar totala antalet produkter i kundvagnen i LocalStorage och sen i diven i index.html
     let quantityDiv = document.getElementById(`quantity-${id}`); 
-    let quantity = quantityDiv.innerText; 
-    quantity++; 
+    let quantity = 1; 
+    const currentItem = basket.find(product => product.productId === id); 
+    if  (currentItem != undefined) {
+        quantity =  currentItem.productQuantity;    
+        quantity++; 
+        currentItem.productQuantity = quantity;
+    }
+    else {
+        const objToAdd = {
+            productId: id,
+            productQuantity: quantity
+        };
+        basket.push(objToAdd); 
+        localStorage.setItem("data", JSON.stringify(basket)); /* Denna uppdaterar även "data" om den redan finns */ 
+    }
+    
+    
     quantityDiv.innerText = quantity; 
-    //Uppdaterar totala antalet produkter i kundvagnen
-    let currentCartAmount = cartAmount.innerText; 
+    let currentCartAmount = cartAmountDiv.innerText; 
     currentCartAmount++; 
-    cartAmount.innerText = currentCartAmount; 
+    cartAmountDiv.innerText = currentCartAmount; 
+    
+    localStorage.setItem("data", JSON.stringify(basket));
 }
 
 const decrement = (id) => {
     // Om användaren klickar på - på produkten 
     let quantityDiv = document.getElementById(`quantity-${id}`); 
+
+    //Uppdaterar totala antalet produkter i kundvagnen 
+    console.log("Current basket: ", basket); 
     let quantity = quantityDiv.innerText; 
     if (quantity > 0) {
         quantity--; 
         quantityDiv.innerText = quantity; 
-        let currentCartAmount = cartAmount.innerText; 
+
+        const currentItemIndex = basket.findIndex(product => product.productId === id); 
+        basket[currentItemIndex].productQuantity--;  
+        localStorage.setItem("data", JSON.stringify(basket));
+
+        let currentCartAmount = cartAmountDiv.innerText; 
         if (currentCartAmount > 0) {
             currentCartAmount--; 
-            cartAmount.innerText = currentCartAmount; 
+            cartAmountDiv.innerText = currentCartAmount; 
         }
     }
 }

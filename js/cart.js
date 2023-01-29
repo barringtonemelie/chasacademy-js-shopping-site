@@ -5,6 +5,7 @@ let basket = JSON.parse(localStorage.getItem("data")) || []
 
 // Produktdatat finns i variabeln shopData (se data.js)
 
+//Använd localstorage för att komma åt vad som klickats på  
 
 const generateCartItems = () => {
     // Generera alla produkter med dynamisk HTML och Array.protype.map() samt join()
