@@ -1,6 +1,6 @@
-let shoppingCart = document.getElementById("shopping-cart")
+let shoppingCart = document.getElementById("shopping-cart");
 
-let basket = JSON.parse(localStorage.getItem("data")) || []
+let basket = JSON.parse(localStorage.getItem("data")) || [];
 
 
 // Produktdatat finns i variabeln shopData (se data.js)
