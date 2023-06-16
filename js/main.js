@@ -75,6 +75,12 @@ const increment = (id) => {
     cartAmountDiv.innerText = currentCartAmount; 
     
     localStorage.setItem("data", JSON.stringify(basket));
+
+    gtag('event', 'button_click', {
+        'event_category': 'interactions on products',
+        'event_label': 'adding products to cart',
+        'value': 1
+    });
 }
 
 const decrement = (id) => {
